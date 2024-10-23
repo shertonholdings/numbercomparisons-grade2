@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 2 - Number Comparisons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        #logo img {
+            width: 150px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #question {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .drop-area {
+            width: 50px;
+            height: 50px;
+            border: 2px dashed #4CAF50;
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 10px;
+        }
+        .symbol {
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 20px;
+            margin: 5px;
+        }
+        .correct {
+            background-color: #c8e6c9; /* Light green */
+        }
+        .wrong {
+            background-color: #ffcdd2; /* Light red */
+        }
+        #feedback {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        #more-lessons {
+            margin-top: 40px;
+            font-size: 18px;
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+        }
+        #more-lessons:hover {
+            background-color: darkgreen;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo at the top -->
+    <div id="logo">
+        <img src="https://i.imgur.com/mwpTHJj.png" alt="Logo">
+    </div>
+
+    <h1>Number Comparisons</h1>
+
+    <!-- Question -->
+    <div id="question"></div>
+
+    <!-- Drop Area -->
+    <div id="drop-area" class="drop-area"></div>
+
+    <!-- Symbol Options -->
+    <div id="symbol-options"></div>
+
+    <div id="feedback"></div>
+
+    <!-- "More Lessons" button at the bottom -->
+    <a id="more-lessons" href="https://sites.google.com/view/grades-2/home">More Lessons</a>
+
+    <script>
+        let number1, number2, correctSymbol;
+
+        // Generate a random comparison question
+        function generateQuestion() {
+            number1 = Math.floor(Math.random() * 100);
+            number2 = Math.floor(Math.random() * 100);
+            correctSymbol = getCorrectSymbol(number1, number2);
+            document.getElementById('question').innerText = `Which is greater? ${number1} __ ${number2}`;
+            createSymbolOptions();
+            document.getElementById('drop-area').innerHTML = ''; // Clear previous drops
+            document.getElementById('feedback').innerText = ''; // Clear feedback
+        }
+
+        // Get the correct symbol for the comparison
+        function getCorrectSymbol(num1, num2) {
+            if (num1 > num2) return '>';
+            else if (num1 < num2) return '<';
+            else return '=';
+        }
+
+        // Create symbol options for drag-and-drop
+        function createSymbolOptions() {
+            const symbols = ['>', '<', '='];
+            symbols.forEach(symbol => {
+                const symbolDiv = document.createElement("div");
+                symbolDiv.className = "symbol";
+                symbolDiv.draggable = true;
+                symbolDiv.innerText = symbol;
+                symbolDiv.ondragstart = (event) => {
+                    event.dataTransfer.setData("text/plain", symbol);
+                };
+                document.getElementById('symbol-options').appendChild(symbolDiv);
+            });
+        }
+
+        // Allow dropping in the area
+        document.getElementById('drop-area').ondragover = (event) => {
+            event.preventDefault();
+        };
+
+        document.getElementById('drop-area').ondrop = (event) => {
+            const droppedSymbol = event.dataTransfer.getData("text/plain");
+            document.getElementById('drop-area').innerText = droppedSymbol; // Show dropped symbol
+            checkAnswer(droppedSymbol);
+        };
+
+        // Check the answer
+        function checkAnswer(userSymbol) {
+            if (userSymbol === correctSymbol) {
+                document.getElementById('feedback').innerText = "Correct! Well done!";
+                document.getElementById('feedback').style.color = "green";
+                document.getElementById('drop-area').className += " correct";
+                setTimeout(generateQuestion, 2000); // Move to next question after 2 seconds
+            } else {
+                document.getElementById('feedback').innerText = "Oops! Try again!";
+                document.getElementById('feedback').style.color = "red";
+                document.getElementById('drop-area').className += " wrong";
+                setTimeout(() => {
+                    document.getElementById('drop-area').innerHTML = ''; // Clear the drop area
+                    document.getElementById('drop-area').className = "drop-area"; // Reset class
+                }, 1000);
+            }
+        }
+
+        // Initialize question on page load
+        window.onload = function() {
+            generateQuestion();
+        }
+    </script>
+
+</body>
+</html>
+
